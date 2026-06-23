@@ -1,0 +1,200 @@
+[
+  {
+    "id": "en_math_001",
+    "language": "english",
+    "category": "math",
+    "difficulty": "easy",
+    "question": "A train travels 300 km in 4 hours. What is its average speed in km/h?",
+    "reference": "Average speed = Distance / Time = 300 / 4 = 75 km/h.",
+    "requires_tool": false
+  },
+  {
+    "id": "en_math_002",
+    "language": "english",
+    "category": "math",
+    "difficulty": "medium",
+    "question": "If the compound interest on a principal of Rs 10,000 at 10% per annum for 2 years is calculated, what is the total amount?",
+    "reference": "Amount = P(1 + r/100)^n = 10000(1.1)^2 = 10000 × 1.21 = Rs 12,100. CI = Rs 2,100.",
+    "requires_tool": false
+  },
+  {
+    "id": "en_math_003",
+    "language": "english",
+    "category": "math",
+    "difficulty": "hard",
+    "question": "Find the sum of the infinite geometric series: 1 + 1/2 + 1/4 + 1/8 + ...",
+    "reference": "Sum = a/(1-r) = 1/(1-0.5) = 1/0.5 = 2. The series converges to 2.",
+    "requires_tool": false
+  },
+  {
+    "id": "en_math_004",
+    "language": "english",
+    "category": "math",
+    "difficulty": "easy",
+    "question": "What is 15% of 840?",
+    "reference": "15% of 840 = 840 × 15/100 = 126.",
+    "requires_tool": true
+  },
+  {
+    "id": "en_math_005",
+    "language": "english",
+    "category": "math",
+    "difficulty": "medium",
+    "question": "Two workers A and B can complete a job in 8 and 12 days respectively. How many days will they take to complete it together?",
+    "reference": "A's rate = 1/8, B's rate = 1/12. Combined = 1/8 + 1/12 = 3/24 + 2/24 = 5/24. Time = 24/5 = 4.8 days.",
+    "requires_tool": false
+  },
+  {
+    "id": "en_math_006",
+    "language": "english",
+    "category": "math",
+    "difficulty": "hard",
+    "question": "A bag contains 5 red, 3 blue, and 2 green balls. Two balls are drawn at random without replacement. What is the probability both are red?",
+    "reference": "P = C(5,2)/C(10,2) = 10/45 = 2/9 ≈ 0.222.",
+    "requires_tool": false
+  },
+  {
+    "id": "en_math_007",
+    "language": "english",
+    "category": "math",
+    "difficulty": "easy",
+    "question": "Calculate: 347 * 289 + sqrt(625)",
+    "reference": "347 * 289 = 100283. sqrt(625) = 25. Total = 100308.",
+    "requires_tool": true
+  },
+  {
+    "id": "en_math_008",
+    "language": "english",
+    "category": "math",
+    "difficulty": "medium",
+    "question": "The perimeter of a rectangle is 56 cm. If the length is 4 cm more than the width, find both dimensions.",
+    "reference": "2(l + w) = 56, l = w + 4. 2(w+4+w) = 56 → 4w+8 = 56 → w = 12, l = 16. Width = 12 cm, Length = 16 cm.",
+    "requires_tool": false
+  },
+  {
+    "id": "en_reasoning_001",
+    "language": "english",
+    "category": "reasoning",
+    "difficulty": "easy",
+    "question": "Complete the series: 2, 5, 10, 17, 26, ___",
+    "reference": "37. The differences are 3, 5, 7, 9, 11 (odd numbers). Next difference = 11, so 26 + 11 = 37.",
+    "requires_tool": false
+  },
+  {
+    "id": "en_reasoning_002",
+    "language": "english",
+    "category": "reasoning",
+    "difficulty": "medium",
+    "question": "All mammals are warm-blooded. Dolphins are mammals. Whales are mammals. Are dolphins and whales both warm-blooded? Explain your reasoning.",
+    "reference": "Yes. By syllogistic reasoning: Dolphins are mammals → warm-blooded. Whales are mammals → warm-blooded. Both are definitively warm-blooded.",
+    "requires_tool": false
+  },
+  {
+    "id": "en_reasoning_003",
+    "language": "english",
+    "category": "reasoning",
+    "difficulty": "hard",
+    "question": "In a tournament, each team plays every other team exactly once. If there are 8 teams, how many total games are played?",
+    "reference": "Number of games = C(8,2) = 8!/(2!×6!) = 28 games.",
+    "requires_tool": false
+  },
+  {
+    "id": "en_reasoning_004",
+    "language": "english",
+    "category": "reasoning",
+    "difficulty": "easy",
+    "question": "If today is Wednesday, what day will it be 100 days from now?",
+    "reference": "100 / 7 = 14 weeks + 2 days. Wednesday + 2 days = Friday.",
+    "requires_tool": false
+  },
+  {
+    "id": "en_reasoning_005",
+    "language": "english",
+    "category": "reasoning",
+    "difficulty": "medium",
+    "question": "A father is 3 times older than his son. After 12 years, he will be twice as old. What are their current ages?",
+    "reference": "Father = 3s. After 12 years: 3s+12 = 2(s+12) → 3s+12 = 2s+24 → s = 12. Son = 12, Father = 36.",
+    "requires_tool": false
+  },
+  {
+    "id": "en_knowledge_001",
+    "language": "english",
+    "category": "knowledge",
+    "difficulty": "easy",
+    "question": "What does RAG stand for in AI and what problem does it solve?",
+    "reference": "RAG stands for Retrieval Augmented Generation. It solves the problem of LLM hallucination and knowledge cutoff by retrieving relevant documents from an external knowledge base and providing them as context to the LLM before generating an answer.",
+    "requires_tool": false
+  },
+  {
+    "id": "en_knowledge_002",
+    "language": "english",
+    "category": "knowledge",
+    "difficulty": "medium",
+    "question": "What is the difference between fine-tuning and prompt engineering for LLMs? When would you choose each?",
+    "reference": "Fine-tuning updates model weights on task-specific data — best for consistent style/format or domain-specific knowledge. Prompt engineering uses clever instructions without changing weights — best for quick iteration, low cost, and when data is scarce. Use fine-tuning for specialization at scale; prompt engineering for flexibility.",
+    "requires_tool": false
+  },
+  {
+    "id": "en_knowledge_003",
+    "language": "english",
+    "category": "knowledge",
+    "difficulty": "hard",
+    "question": "Explain the ReAct agent pattern and how it differs from standard chain-of-thought prompting.",
+    "reference": "ReAct (Reason+Act) interleaves reasoning traces with actions in an observe-reason-act loop, allowing the agent to use external tools and update its reasoning based on tool results. Standard CoT only reasons internally without external interaction. ReAct can ground reasoning in real-world information, reducing hallucination in tool-augmented tasks.",
+    "requires_tool": false
+  },
+  {
+    "id": "en_knowledge_004",
+    "language": "english",
+    "category": "knowledge",
+    "difficulty": "easy",
+    "question": "What is vector similarity search and name two databases that support it?",
+    "reference": "Vector similarity search finds the nearest vectors in a high-dimensional space using metrics like cosine similarity or Euclidean distance. Two databases: ChromaDB and Pinecone (also Qdrant, Weaviate, pgvector).",
+    "requires_tool": false
+  },
+  {
+    "id": "en_knowledge_005",
+    "language": "english",
+    "category": "knowledge",
+    "difficulty": "medium",
+    "question": "What is LLM-as-judge evaluation and what are its advantages over human evaluation?",
+    "reference": "LLM-as-judge uses a language model to evaluate the quality of another model's outputs on dimensions like faithfulness, helpfulness, and relevance. Advantages over human eval: massively scalable (thousands of evaluations per minute), consistent (no inter-annotator disagreement), cheap, fast, and can be calibrated against human labels.",
+    "requires_tool": false
+  },
+  {
+    "id": "en_instruction_001",
+    "language": "english",
+    "category": "instruction",
+    "difficulty": "easy",
+    "question": "Translate to Bengali: 'Machine learning is changing the world.'",
+    "reference": "মেশিন লার্নিং পৃথিবী বদলে দিচ্ছে।",
+    "requires_tool": false
+  },
+  {
+    "id": "en_instruction_002",
+    "language": "english",
+    "category": "instruction",
+    "difficulty": "medium",
+    "question": "Write a Python function that checks if a string is a palindrome and handles edge cases.",
+    "reference": "def is_palindrome(s): s = s.lower().replace(' ',''); return s == s[::-1]",
+    "requires_tool": false
+  },
+  {
+    "id": "en_code_001",
+    "language": "english",
+    "category": "code",
+    "difficulty": "easy",
+    "question": "Write and run Python code to find all prime numbers between 1 and 50.",
+    "reference": "Primes: [2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47]",
+    "requires_tool": true
+  },
+  {
+    "id": "en_code_002",
+    "language": "english",
+    "category": "code",
+    "difficulty": "medium",
+    "question": "Write Python code to count word frequencies in the sentence 'to be or not to be that is the question' and show the top 3.",
+    "reference": "from collections import Counter; text='to be or not to be that is the question'; c=Counter(text.split()); print(c.most_common(3))  # [('to',2),('be',2),...]",
+    "requires_tool": true
+  }
+]

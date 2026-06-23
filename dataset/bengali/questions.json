@@ -1,0 +1,209 @@
+[
+  {
+    "id": "bn_math_001",
+    "language": "bengali",
+    "category": "math",
+    "difficulty": "easy",
+    "question": "একটি ক্লাসে ৩৫ জন ছাত্র আছে। তার মধ্যে ২০ জন ছেলে। মেয়েদের শতকরা হার কত?",
+    "reference": "ক্লাসে মেয়ের সংখ্যা = ৩৫ - ২০ = ১৫ জন। শতকরা হার = (১৫/৩৫) × ১০০ = ৪২.৮৬%",
+    "requires_tool": false
+  },
+  {
+    "id": "bn_math_002",
+    "language": "bengali",
+    "category": "math",
+    "difficulty": "medium",
+    "question": "একটি আয়তক্ষেত্রের দৈর্ঘ্য ১২ সেমি এবং প্রস্থ ৮ সেমি। পরিসীমা এবং ক্ষেত্রফল বের করো।",
+    "reference": "পরিসীমা = ২(১২+৮) = ৪০ সেমি। ক্ষেত্রফল = ১২×৮ = ৯৬ বর্গ সেমি।",
+    "requires_tool": false
+  },
+  {
+    "id": "bn_math_003",
+    "language": "bengali",
+    "category": "math",
+    "difficulty": "hard",
+    "question": "৫ বছর আগে রামের বয়স ছিল শ্যামের বয়সের দ্বিগুণ। এখন তাদের বয়সের সমষ্টি ৪৫। তাদের বর্তমান বয়স কত?",
+    "reference": "ধরি শ্যামের বর্তমান বয়স x। রামের বর্তমান বয়স = ২(x-৫)+৫ = ২x-৫। সমীকরণ: x + ২x - ৫ = ৪৫ → x = ১৬.৬৭। শ্যাম ≈ ১৭, রাম ≈ ২৮।",
+    "requires_tool": false
+  },
+  {
+    "id": "bn_math_004",
+    "language": "bengali",
+    "category": "math",
+    "difficulty": "easy",
+    "question": "১ থেকে ১০০ পর্যন্ত সকল বিজোড় সংখ্যার যোগফল কত?",
+    "reference": "১ থেকে ১০০ পর্যন্ত ৫০টি বিজোড় সংখ্যা আছে। যোগফল = ৫০² = ২৫০০।",
+    "requires_tool": false
+  },
+  {
+    "id": "bn_math_005",
+    "language": "bengali",
+    "category": "math",
+    "difficulty": "medium",
+    "question": "একটি ট্রেন ৬০ কিমি/ঘন্টা গতিতে চলে ২ ঘন্টা ৩০ মিনিটে কত দূরত্ব অতিক্রম করবে?",
+    "reference": "সময় = ২.৫ ঘন্টা। দূরত্ব = ৬০ × ২.৫ = ১৫০ কিমি।",
+    "requires_tool": false
+  },
+  {
+    "id": "bn_math_006",
+    "language": "bengali",
+    "category": "math",
+    "difficulty": "hard",
+    "question": "একটি মিশ্রণে দুধ ও জলের অনুপাত ৩:১। ১৬ লিটার মিশ্রণ থেকে কতটুকু জল যোগ করলে অনুপাত ৩:২ হবে?",
+    "reference": "মিশ্রণে দুধ = ১২ লিটার, জল = ৪ লিটার। নতুন অনুপাত ৩:২ হতে জল = ৮ লিটার দরকার। তাই ৪ লিটার জল যোগ করতে হবে।",
+    "requires_tool": false
+  },
+  {
+    "id": "bn_math_007",
+    "language": "bengali",
+    "category": "math",
+    "difficulty": "easy",
+    "question": "৩৪৫ × ১২ = কত?",
+    "reference": "৩৪৫ × ১২ = ৪১৪০",
+    "requires_tool": true
+  },
+  {
+    "id": "bn_math_008",
+    "language": "bengali",
+    "category": "math",
+    "difficulty": "medium",
+    "question": "একটি বৃত্তের ব্যাসার্ধ ৭ সেমি হলে পরিধি এবং ক্ষেত্রফল কত? (π = ২২/৭ ব্যবহার করো)",
+    "reference": "পরিধি = ২πr = ২ × (২২/৭) × ৭ = ৪৪ সেমি। ক্ষেত্রফল = πr² = (২২/৭) × ৪৯ = ১৫৪ বর্গ সেমি।",
+    "requires_tool": false
+  },
+  {
+    "id": "bn_reasoning_001",
+    "language": "bengali",
+    "category": "reasoning",
+    "difficulty": "easy",
+    "question": "যদি সব গোলাপ ফুল হয়, এবং সব ফুল সুন্দর হয়, তাহলে কি সব গোলাপ সুন্দর? উত্তর যুক্তি দিয়ে দাও।",
+    "reference": "হ্যাঁ, সব গোলাপ সুন্দর। কারণ গোলাপ → ফুল → সুন্দর। এটি সিলোজিজম যুক্তি।",
+    "requires_tool": false
+  },
+  {
+    "id": "bn_reasoning_002",
+    "language": "bengali",
+    "category": "reasoning",
+    "difficulty": "medium",
+    "question": "রাম, শ্যাম, যদু তিনজন বন্ধু। রাম শ্যামের চেয়ে লম্বা। যদু রামের চেয়ে খাটো। তিনজনের মধ্যে সবচেয়ে লম্বা কে?",
+    "reference": "যদু < রাম। রাম > শ্যাম। কিন্তু যদু ও শ্যামের তুলনা সরাসরি নেই। তবে রাম সবার চেয়ে লম্বা।",
+    "requires_tool": false
+  },
+  {
+    "id": "bn_reasoning_003",
+    "language": "bengali",
+    "category": "reasoning",
+    "difficulty": "hard",
+    "question": "৫টি ঘর আছে। প্রতিটি ঘর আলাদা রঙের। প্রতিটি ঘরে আলাদা পেশার মানুষ থাকে। লাল ঘর সবুজ ঘরের বাম দিকে। সবুজ ঘরে কফি পান করা হয়। লাল ঘরে চা পান করা হয়। কোন ঘরে পানি পান করা হয়?",
+    "reference": "এটি আইনস্টাইনের ধাঁধার অনুরূপ। সম্পূর্ণ সমাধানের জন্য আরও তথ্য দরকার। তবে যুক্তিক্রমে বাকি ঘরগুলো বিশ্লেষণ করতে হবে।",
+    "requires_tool": false
+  },
+  {
+    "id": "bn_reasoning_004",
+    "language": "bengali",
+    "category": "reasoning",
+    "difficulty": "easy",
+    "question": "সিরিজ পূরণ করো: ২, ৪, ৮, ১৬, ___",
+    "reference": "৩২। প্রতিটি সংখ্যা আগেরটির দ্বিগুণ (গুণোত্তর ধারা, সাধারণ অনুপাত = ২)।",
+    "requires_tool": false
+  },
+  {
+    "id": "bn_reasoning_005",
+    "language": "bengali",
+    "category": "reasoning",
+    "difficulty": "medium",
+    "question": "একটি ঘড়িতে ৩:১৫ বাজলে ঘণ্টার কাঁটা ও মিনিটের কাঁটার মধ্যে কোণ কত ডিগ্রি?",
+    "reference": "৩টায় ঘণ্টার কাঁটা ৯০° এ থাকে। ১৫ মিনিটে ঘণ্টার কাঁটা ৭.৫° সরে যায়। মিনিটের কাঁটা ৯০° তে। কোণ = ৯০ - (৯০+৭.৫) = ৭.৫°।",
+    "requires_tool": false
+  },
+  {
+    "id": "bn_knowledge_001",
+    "language": "bengali",
+    "category": "knowledge",
+    "difficulty": "easy",
+    "question": "রবীন্দ্রনাথ ঠাকুর কত সালে নোবেল পুরস্কার পান এবং কোন বইয়ের জন্য?",
+    "reference": "রবীন্দ্রনাথ ঠাকুর ১৯১৩ সালে 'গীতাঞ্জলি' (Gitanjali) বইয়ের জন্য সাহিত্যে নোবেল পুরস্কার পান।",
+    "requires_tool": false
+  },
+  {
+    "id": "bn_knowledge_002",
+    "language": "bengali",
+    "category": "knowledge",
+    "difficulty": "medium",
+    "question": "বাংলাদেশের মুক্তিযুদ্ধ কত সালে হয়েছিল এবং কতদিন স্থায়ী হয়েছিল?",
+    "reference": "১৯৭১ সালে। ২৬ মার্চ থেকে ১৬ ডিসেম্বর — মোট ৯ মাস স্থায়ী হয়েছিল।",
+    "requires_tool": false
+  },
+  {
+    "id": "bn_knowledge_003",
+    "language": "bengali",
+    "category": "knowledge",
+    "difficulty": "easy",
+    "question": "পশ্চিমবঙ্গের রাজধানী কী এবং সেখানকার বিখ্যাত নদীর নাম কী?",
+    "reference": "পশ্চিমবঙ্গের রাজধানী কলকাতা। বিখ্যাত নদী হলো হুগলি (গঙ্গার শাখানদী)।",
+    "requires_tool": false
+  },
+  {
+    "id": "bn_knowledge_004",
+    "language": "bengali",
+    "category": "knowledge",
+    "difficulty": "hard",
+    "question": "ট্রান্সফর্মার আর্কিটেকচার কী? সহজ বাংলায় ব্যাখ্যা করো।",
+    "reference": "ট্রান্সফর্মার হলো একটি নিউরাল নেটওয়ার্ক আর্কিটেকচার যা ২০১৭ সালে 'Attention is All You Need' পেপারে প্রকাশিত হয়। এটি সেলফ-অ্যাটেনশন মেকানিজম ব্যবহার করে বাক্যের প্রতিটি শব্দের সাথে অন্য সব শব্দের সম্পর্ক বোঝে। GPT, BERT সব এই আর্কিটেকচারের উপর ভিত্তি করে তৈরি।",
+    "requires_tool": false
+  },
+  {
+    "id": "bn_knowledge_005",
+    "language": "bengali",
+    "category": "knowledge",
+    "difficulty": "medium",
+    "question": "সুন্দরবন কোথায় অবস্থিত এবং এটি কেন বিখ্যাত?",
+    "reference": "সুন্দরবন বাংলাদেশ ও ভারতের পশ্চিমবঙ্গে বিস্তৃত। এটি বিশ্বের বৃহত্তম ম্যানগ্রোভ বন এবং রয়েল বেঙ্গল টাইগারের আবাসস্থল। UNESCO বিশ্ব ঐতিহ্যবাহী স্থান।",
+    "requires_tool": false
+  },
+  {
+    "id": "bn_instruction_001",
+    "language": "bengali",
+    "category": "instruction",
+    "difficulty": "easy",
+    "question": "নিচের বাক্যটি ইংরেজিতে অনুবাদ করো: 'আমি প্রতিদিন সকালে চা পান করি।'",
+    "reference": "I drink tea every morning.",
+    "requires_tool": false
+  },
+  {
+    "id": "bn_instruction_002",
+    "language": "bengali",
+    "category": "instruction",
+    "difficulty": "medium",
+    "question": "একটি সিভি লেখার জন্য ৫টি গুরুত্বপূর্ণ টিপস বাংলায় বলো।",
+    "reference": "১. পরিষ্কার ফরম্যাট ব্যবহার করো। ২. কাজের অভিজ্ঞতা বিস্তারিত লেখো। ৩. দক্ষতা (skills) আলাদা সেকশনে রাখো। ৪. ব্যক্তিগত তথ্য সঠিক দাও। ৫. এক পাতায় সীমিত রাখার চেষ্টা করো।",
+    "requires_tool": false
+  },
+  {
+    "id": "bn_instruction_003",
+    "language": "bengali",
+    "category": "instruction",
+    "difficulty": "hard",
+    "question": "Python ব্যবহার করে একটি ফাংশন লেখো যা একটি বাংলা বাক্য থেকে সব স্বরবর্ণ সরিয়ে দেবে।",
+    "reference": "def remove_bengali_vowels(text): bengali_vowels = 'অআইঈউঊঋএঐওঔ'; return ''.join(c for c in text if c not in bengali_vowels)",
+    "requires_tool": false
+  },
+  {
+    "id": "bn_code_001",
+    "language": "bengali",
+    "category": "code",
+    "difficulty": "easy",
+    "question": "Python-এ ১ থেকে ১০ পর্যন্ত সংখ্যার যোগফল বের করার কোড লেখো এবং চালাও।",
+    "reference": "print(sum(range(1, 11)))  # Output: 55",
+    "requires_tool": true
+  },
+  {
+    "id": "bn_code_002",
+    "language": "bengali",
+    "category": "code",
+    "difficulty": "medium",
+    "question": "Python-এ ফিবোনাচি সিরিজের প্রথম ১০টি সংখ্যা প্রিন্ট করার কোড লেখো।",
+    "reference": "def fib(n): a,b=0,1\n  for _ in range(n): print(a,end=' '); a,b=b,a+b\nfib(10)  # Output: 0 1 1 2 3 5 8 13 21 34",
+    "requires_tool": true
+  }
+]

@@ -1,0 +1,200 @@
+[
+  {
+    "id": "hi_math_001",
+    "language": "hindi",
+    "category": "math",
+    "difficulty": "easy",
+    "question": "एक दुकानदार ने 500 रुपये में एक वस्तु खरीदी और 20% लाभ पर बेची। बिक्री मूल्य कितना है?",
+    "reference": "लाभ = 500 × 20/100 = 100 रुपये। बिक्री मूल्य = 500 + 100 = 600 रुपये।",
+    "requires_tool": false
+  },
+  {
+    "id": "hi_math_002",
+    "language": "hindi",
+    "category": "math",
+    "difficulty": "medium",
+    "question": "यदि किसी संख्या का 15% घटाने पर 340 मिलता है, तो संख्या क्या है?",
+    "reference": "संख्या × (1 - 0.15) = 340 → संख्या × 0.85 = 340 → संख्या = 340/0.85 = 400।",
+    "requires_tool": false
+  },
+  {
+    "id": "hi_math_003",
+    "language": "hindi",
+    "category": "math",
+    "difficulty": "hard",
+    "question": "दो नल A और B एक टंकी को क्रमशः 12 घंटे और 18 घंटे में भर सकते हैं। दोनों एक साथ खुलने पर टंकी कितने घंटे में भरेगी?",
+    "reference": "A की दर = 1/12, B की दर = 1/18। साथ मिलाकर = 1/12 + 1/18 = 3/36 + 2/36 = 5/36 प्रति घंटा। समय = 36/5 = 7.2 घंटे।",
+    "requires_tool": false
+  },
+  {
+    "id": "hi_math_004",
+    "language": "hindi",
+    "category": "math",
+    "difficulty": "easy",
+    "question": "एक त्रिभुज के तीनों कोणों का योग कितना होता है? यदि दो कोण 60° और 80° हैं तो तीसरा कोण क्या होगा?",
+    "reference": "त्रिभुज के तीनों कोणों का योग 180° होता है। तीसरा कोण = 180 - 60 - 80 = 40°।",
+    "requires_tool": false
+  },
+  {
+    "id": "hi_math_005",
+    "language": "hindi",
+    "category": "math",
+    "difficulty": "medium",
+    "question": "5000 रुपये पर 8% वार्षिक दर से 3 साल का साधारण ब्याज कितना होगा?",
+    "reference": "साधारण ब्याज = (मूलधन × दर × समय) / 100 = (5000 × 8 × 3) / 100 = 1200 रुपये।",
+    "requires_tool": false
+  },
+  {
+    "id": "hi_math_006",
+    "language": "hindi",
+    "category": "math",
+    "difficulty": "hard",
+    "question": "एक ट्रेन 90 km/h की गति से चल रही है। एक पुल को पार करने में 30 सेकंड लगते हैं। यदि ट्रेन की लंबाई 200 मीटर है तो पुल की लंबाई क्या है?",
+    "reference": "ट्रेन की गति = 90 × 1000/3600 = 25 m/s। 30 सेकंड में दूरी = 750 मीटर। पुल की लंबाई = 750 - 200 = 550 मीटर।",
+    "requires_tool": false
+  },
+  {
+    "id": "hi_math_007",
+    "language": "hindi",
+    "category": "math",
+    "difficulty": "easy",
+    "question": "987 × 45 = ?",
+    "reference": "987 × 45 = 44415",
+    "requires_tool": true
+  },
+  {
+    "id": "hi_math_008",
+    "language": "hindi",
+    "category": "math",
+    "difficulty": "medium",
+    "question": "एक वर्ग का क्षेत्रफल 144 वर्ग सेमी है। उसकी परिधि कितनी होगी?",
+    "reference": "भुजा = √144 = 12 सेमी। परिधि = 4 × 12 = 48 सेमी।",
+    "requires_tool": false
+  },
+  {
+    "id": "hi_reasoning_001",
+    "language": "hindi",
+    "category": "reasoning",
+    "difficulty": "easy",
+    "question": "श्रृंखला पूरी करें: 3, 6, 12, 24, ___",
+    "reference": "48। प्रत्येक संख्या पिछली संख्या की दोगुनी है (गुणोत्तर श्रेणी, सार्व अनुपात = 2)।",
+    "requires_tool": false
+  },
+  {
+    "id": "hi_reasoning_002",
+    "language": "hindi",
+    "category": "reasoning",
+    "difficulty": "medium",
+    "question": "यदि BOOK को CPPL लिखा जाए तो MANGO को क्या लिखा जाएगा?",
+    "reference": "प्रत्येक अक्षर में +1 जोड़ा गया है। MANGO → NBOQP।",
+    "requires_tool": false
+  },
+  {
+    "id": "hi_reasoning_003",
+    "language": "hindi",
+    "category": "reasoning",
+    "difficulty": "hard",
+    "question": "5 व्यक्ति A, B, C, D, E एक पंक्ति में बैठे हैं। A, B के दाईं ओर है। C, D के बाईं ओर है। B, D के बाईं ओर है। E सबसे दाईं ओर है। सबसे बाईं ओर कौन है?",
+    "reference": "क्रम: C, D, B, A, E। सबसे बाईं ओर C है।",
+    "requires_tool": false
+  },
+  {
+    "id": "hi_reasoning_004",
+    "language": "hindi",
+    "category": "reasoning",
+    "difficulty": "easy",
+    "question": "एक घड़ी में 6 बजे घंटे और मिनट की सुई के बीच का कोण कितना होता है?",
+    "reference": "6 बजे घंटे की सुई 180° पर होती है और मिनट की सुई 0° पर। दोनों के बीच का कोण = 180°।",
+    "requires_tool": false
+  },
+  {
+    "id": "hi_reasoning_005",
+    "language": "hindi",
+    "category": "reasoning",
+    "difficulty": "medium",
+    "question": "यदि परसों शनिवार था, तो आने वाले कल के बाद का दिन क्या होगा?",
+    "reference": "परसों = शनिवार। कल = सोमवार। कल के बाद = मंगलवार।",
+    "requires_tool": false
+  },
+  {
+    "id": "hi_knowledge_001",
+    "language": "hindi",
+    "category": "knowledge",
+    "difficulty": "easy",
+    "question": "भारत का राष्ट्रीय पशु कौन सा है और यह किस राज्य में सबसे अधिक पाया जाता है?",
+    "reference": "भारत का राष्ट्रीय पशु बंगाल टाइगर है। यह मध्यप्रदेश में सबसे अधिक पाया जाता है।",
+    "requires_tool": false
+  },
+  {
+    "id": "hi_knowledge_002",
+    "language": "hindi",
+    "category": "knowledge",
+    "difficulty": "medium",
+    "question": "आर्टिफिशियल इंटेलिजेंस और मशीन लर्निंग में क्या अंतर है? सरल हिंदी में समझाएं।",
+    "reference": "AI एक व्यापक क्षेत्र है जो मशीनों को इंसानों जैसा सोचने-समझने की क्षमता देता है। ML, AI का एक हिस्सा है जिसमें मशीनें डेटा से सीखती हैं बिना explicit programming के। सभी ML, AI है लेकिन सभी AI, ML नहीं है।",
+    "requires_tool": false
+  },
+  {
+    "id": "hi_knowledge_003",
+    "language": "hindi",
+    "category": "knowledge",
+    "difficulty": "hard",
+    "question": "Large Language Models (LLMs) कैसे काम करते हैं? Transformer architecture का role क्या है?",
+    "reference": "LLMs बड़े text corpus पर train किए गए neural networks हैं। Transformer architecture self-attention mechanism का उपयोग करती है जो प्रत्येक word को बाकी सभी words के साथ relate करती है। Next token prediction के जरिए training होती है। GPT, BERT, LLaMA सब Transformer-based हैं।",
+    "requires_tool": false
+  },
+  {
+    "id": "hi_knowledge_004",
+    "language": "hindi",
+    "category": "knowledge",
+    "difficulty": "easy",
+    "question": "भारत में AI के क्षेत्र में काम करने वाली 3 प्रमुख कंपनियों के नाम बताएं।",
+    "reference": "1. Sarvam AI (Indic language AI), 2. AI4Bharat (IIT Madras), 3. Krutrim (Ola का AI startup)। इसके अलावा TCS, Infosys, Wipro भी AI में काम कर रही हैं।",
+    "requires_tool": false
+  },
+  {
+    "id": "hi_knowledge_005",
+    "language": "hindi",
+    "category": "knowledge",
+    "difficulty": "medium",
+    "question": "RAG (Retrieval Augmented Generation) क्या है और इसे क्यों उपयोग किया जाता है?",
+    "reference": "RAG एक तकनीक है जो LLM को external knowledge base से relevant information retrieve करके better answers generate करने में मदद करती है। इसे इसलिए उपयोग किया जाता है क्योंकि LLMs की training cutoff date होती है और वे hallucinate कर सकते हैं। RAG से factual accuracy बढ़ती है।",
+    "requires_tool": false
+  },
+  {
+    "id": "hi_instruction_001",
+    "language": "hindi",
+    "category": "instruction",
+    "difficulty": "easy",
+    "question": "निम्नलिखित वाक्य को अंग्रेजी में अनुवाद करें: 'मुझे आम का अचार बहुत पसंद है।'",
+    "reference": "I love mango pickle very much.",
+    "requires_tool": false
+  },
+  {
+    "id": "hi_instruction_002",
+    "language": "hindi",
+    "category": "instruction",
+    "difficulty": "medium",
+    "question": "एक junior developer को code review करते समय क्या देखना चाहिए? 5 points में बताएं।",
+    "reference": "1. Code readability और naming conventions। 2. Logic errors और edge cases। 3. Performance issues। 4. Security vulnerabilities। 5. Test coverage और documentation।",
+    "requires_tool": false
+  },
+  {
+    "id": "hi_code_001",
+    "language": "hindi",
+    "category": "code",
+    "difficulty": "easy",
+    "question": "Python में एक list के सभी elements का average निकालने का code लिखें और [10, 20, 30, 40, 50] पर चलाएं।",
+    "reference": "numbers = [10, 20, 30, 40, 50]; print(sum(numbers)/len(numbers))  # Output: 30.0",
+    "requires_tool": true
+  },
+  {
+    "id": "hi_code_002",
+    "language": "hindi",
+    "category": "code",
+    "difficulty": "medium",
+    "question": "Python में bubble sort algorithm लिखें और [64, 34, 25, 12, 22, 11, 90] को sort करें।",
+    "reference": "def bubble_sort(arr): n=len(arr)\n  for i in range(n):\n    for j in range(0,n-i-1):\n      if arr[j]>arr[j+1]: arr[j],arr[j+1]=arr[j+1],arr[j]\n  return arr\nprint(bubble_sort([64,34,25,12,22,11,90]))  # [11,12,22,25,34,64,90]",
+    "requires_tool": true
+  }
+]
