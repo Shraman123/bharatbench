@@ -12,7 +12,9 @@ Each question has:
   - difficulty  : "easy" | "medium" | "hard"
   - question    : the prompt sent to the model
   - reference   : ground-truth answer (for scoring)
-  - requires_tool: whether the question needs a tool (web/calculator/code)
+  - requires_tool: whether the question needs a tool (web/calculator/code).
+                  INFORMATIONAL ONLY -- not currently enforced by
+                  eval/runner.py; see README.md#known-limitations.
   - source      : provenance of the question (required for new questions —
                   see CONTRIBUTING.md). Existing questions predate this field
                   and currently fail schema validation on it; that gap is

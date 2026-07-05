@@ -240,6 +240,9 @@ async def evaluate_question(
     """Run one question through one model and return a result record."""
     logger.info(f"  [{model_name}] {q['id']}")
 
+    # q["requires_tool"] is intentionally not read here -- it's informational
+    # only. Every question is answered via plain chat completion regardless;
+    # see README.md#known-limitations.
     response, latency_ms, tokens = await call_model(
         client, model_id, q["question"], q["language"]
     )

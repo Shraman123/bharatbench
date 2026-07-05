@@ -42,7 +42,8 @@
       "minLength": 1
     },
     "requires_tool": {
-      "type": "boolean"
+      "type": "boolean",
+      "description": "Informational only -- NOT currently enforced by eval/runner.py. Questions marked true are still answered via plain chat completion, with no actual calculator/code-execution tool call. See README.md#known-limitations."
     },
     "source": {
       "type": "string",

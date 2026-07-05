@@ -7,6 +7,8 @@ This is one benchmark among several covering Indic languages (see prior work
 like IndicGLUE, IndicXTREME, and MILU) — its contribution is a small,
 hand-written question set focused specifically on comparing math/reasoning/
 knowledge/instruction/code performance across Bengali, Hindi, and English.
+See [Known Limitations](#known-limitations) before drawing conclusions from
+its results.
 
 **Status:** Work in progress. No paper has been published yet; the citation
 below is a placeholder for when/if one is.
@@ -118,6 +120,36 @@ bharatbench/
 
 There is no `paper/` folder yet — a prior version of this README referenced
 one that was never created.
+
+---
+
+## Known Limitations
+
+- **Judge/subject model overlap.** `llama-3.1-8b-instant` is both one of the
+  four models being evaluated and the LLM-as-judge scoring every response,
+  including its own. This is a known source of self-preference bias in
+  LLM-as-judge setups — treat that model's scores with extra skepticism until
+  the judge is decoupled from the model pool (e.g. a fixed, stronger,
+  never-evaluated judge model).
+- **Non-parallel language question sets.** The Bengali, Hindi, and English
+  question sets are not translations of each other — they cover different
+  topics (e.g. Bengali asks about Tagore and the Bangladesh Liberation War;
+  Hindi asks about Indian AI companies; English asks about RAG/ReAct). The
+  "language gap" metric therefore conflates language-capability differences
+  with topic/question-difficulty differences. Read gap numbers as a rough
+  signal, not a controlled measurement, until the sets are made parallel.
+- **Small, unverified-provenance dataset.** 67 questions total, none currently
+  carry a `source`/provenance field (tracked mechanically by
+  `scripts/validate_dataset.py`, not yet resolved). An engineering audit also
+  surfaced at least one question with a reference answer that doesn't fully
+  resolve the question asked — dataset content is intentionally out of scope
+  for this pass and hasn't been corrected.
+- **`requires_tool` is not enforced.** Questions flagged as needing a
+  calculator or code execution are currently answered via plain chat
+  completion with no tool augmentation. The field is informational only;
+  wiring up real tool execution would need a sandboxed code-execution path
+  and a separate scoring rubric for tool-augmented answers, which is out of
+  scope for the current harness.
 
 ---
 
