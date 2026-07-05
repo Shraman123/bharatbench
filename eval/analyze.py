@@ -21,7 +21,6 @@ import sys
 import argparse
 from pathlib import Path
 from collections import defaultdict
-from typing import Optional
 
 # Windows consoles default to cp1252, which can't encode the box-drawing
 # characters used below and crashes with UnicodeEncodeError. Force UTF-8 on
@@ -205,7 +204,7 @@ def print_report(metadata: dict, results: list) -> None:
         print(row)
 
     if bad:
-        print(f"\n── DEGRADED (judge parse failed, excluded from scores) ─")
+        print("\n── DEGRADED (judge parse failed, excluded from scores) ─")
         by_model_degraded = defaultdict(int)
         for r in bad:
             by_model_degraded[r["model"]] += 1
@@ -214,7 +213,7 @@ def print_report(metadata: dict, results: list) -> None:
 
     failures = find_failures(good)
     if failures:
-        print(f"\n── TOP FAILURE CASES (score < 0.4) ──────────────────")
+        print("\n── TOP FAILURE CASES (score < 0.4) ──────────────────")
         for f in failures[:5]:
             print(f"  [{f['language'].upper()}] [{f['category']}] {f['question_id']} — avg {f['avg_score']:.3f}")
             print(f"    Q: {f['question'][:120]}")
