@@ -23,6 +23,12 @@ from pathlib import Path
 from collections import defaultdict
 from typing import Optional
 
+# Windows consoles default to cp1252, which can't encode the box-drawing
+# characters used below and crashes with UnicodeEncodeError. Force UTF-8 on
+# stdout so this runs the same on Windows, macOS, and Linux.
+if hasattr(sys.stdout, "reconfigure"):
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+
 
 def load_results(path: str) -> tuple[dict, list]:
     with open(path, encoding="utf-8") as f:
@@ -30,8 +36,18 @@ def load_results(path: str) -> tuple[dict, list]:
     return data["metadata"], data["results"]
 
 
+def usable(results: list) -> list:
+    """Results with a valid (non-degraded) judge score."""
+    return [r for r in results if not r["scores"].get("judge_parse_failed", False)]
+
+
+def degraded(results: list) -> list:
+    """Results where the judge output couldn't be parsed — excluded from aggregates."""
+    return [r for r in results if r["scores"].get("judge_parse_failed", False)]
+
+
 def aggregate(results: list, group_by: list) -> dict:
-    """Group results and compute mean scores."""
+    """Group results and compute mean scores. Callers must pass usable(results)."""
     groups = defaultdict(list)
     for r in results:
         key = tuple(r[g] for g in group_by)
@@ -122,11 +138,13 @@ def generate_latex_table(gaps: dict) -> str:
 
 def generate_dashboard_json(metadata: dict, results: list, gaps: dict) -> dict:
     """Generate JSON for the React dashboard."""
-    by_model = aggregate(results, ["model"])
-    by_lang  = aggregate(results, ["language"])
-    by_cat   = aggregate(results, ["category"])
-    by_diff  = aggregate(results, ["difficulty"])
-    by_model_lang = aggregate(results, ["model", "language"])
+    good = usable(results)
+    bad  = degraded(results)
+    by_model = aggregate(good, ["model"])
+    by_lang  = aggregate(good, ["language"])
+    by_cat   = aggregate(good, ["category"])
+    by_diff  = aggregate(good, ["difficulty"])
+    by_model_lang = aggregate(good, ["model", "language"])
 
     return {
         "metadata":          metadata,
@@ -138,8 +156,10 @@ def generate_dashboard_json(metadata: dict, results: list, gaps: dict) -> dict:
         },
         "by_model_language": {str(k): v for k, v in by_model_lang.items()},
         "language_gaps":     gaps,
-        "failures":          find_failures(results),
+        "failures":          find_failures(good),
         "total_evaluations": len(results),
+        "usable_evaluations": len(good),
+        "degraded_evaluations": len(bad),
     }
 
 
@@ -153,9 +173,13 @@ def print_report(metadata: dict, results: list) -> None:
     print(f"Languages:  {', '.join(metadata.get('languages', []))}")
     print(f"Questions:  {metadata.get('total_questions', 0)}")
     print(f"Timestamp:  {metadata.get('timestamp', '')}")
+
+    bad = degraded(results)
+    good = usable(results)
+    print(f"Evaluations: {len(results)} total, {len(bad)} degraded (judge parse failed, excluded below)")
     print()
 
-    gaps = compute_language_gap(results)
+    gaps = compute_language_gap(good)
 
     print("── LANGUAGE GAP ANALYSIS ──────────────────────────────")
     print(f"{'Model':<20} {'English':>8} {'Bengali':>8} {'Hindi':>8} {'BN Gap':>8} {'HI Gap':>8}")
@@ -167,7 +191,7 @@ def print_report(metadata: dict, results: list) -> None:
         )
 
     print()
-    by_cat = aggregate(results, ["category", "language"])
+    by_cat = aggregate(good, ["category", "language"])
     print("── CATEGORY × LANGUAGE ────────────────────────────────")
     langs = ["english", "bengali", "hindi"]
     cats  = ["math", "reasoning", "knowledge", "instruction", "code"]
@@ -176,12 +200,19 @@ def print_report(metadata: dict, results: list) -> None:
     for cat in cats:
         row = f"{cat:<15}"
         for lang in langs:
-            key = str((cat, lang))
             val = by_cat.get((cat, lang), {}).get("mean", "-")
             row += f" {val:>9.3f}" if isinstance(val, float) else f" {'N/A':>9}"
         print(row)
 
-    failures = find_failures(results)
+    if bad:
+        print(f"\n── DEGRADED (judge parse failed, excluded from scores) ─")
+        by_model_degraded = defaultdict(int)
+        for r in bad:
+            by_model_degraded[r["model"]] += 1
+        for model, count in sorted(by_model_degraded.items()):
+            print(f"  {model:<20} {count} record(s)")
+
+    failures = find_failures(good)
     if failures:
         print(f"\n── TOP FAILURE CASES (score < 0.4) ──────────────────")
         for f in failures[:5]:
@@ -202,7 +233,7 @@ if __name__ == "__main__":
     metadata, results = load_results(args.results_file)
     print_report(metadata, results)
 
-    gaps = compute_language_gap(results)
+    gaps = compute_language_gap(usable(results))
 
     if args.latex:
         print("\n── LaTeX TABLE ────────────────────────────────────────")
