@@ -11,6 +11,7 @@ Usage:
 """
 
 import json
+import re
 import time
 import asyncio
 import argparse
@@ -19,7 +20,13 @@ from pathlib import Path
 from datetime import datetime
 from typing import Optional
 
-from groq import AsyncGroq
+from groq import (
+    AsyncGroq,
+    APIConnectionError,
+    APITimeoutError,
+    InternalServerError,
+    RateLimitError,
+)
 from dotenv import load_dotenv
 import os
 
@@ -34,16 +41,43 @@ RESULTS_DIR = Path(__file__).parent.parent / "results"
 RESULTS_DIR.mkdir(exist_ok=True)
 
 # Models available on Groq free tier
+# NOTE: gemma2-9b-it and mixtral-8x7b-32768 were deprecated by Groq on
+# 2025-10-08 and 2025-03-20 respectively and are no longer callable.
+# Replaced with openai/gpt-oss-20b and openai/gpt-oss-120b (verified against
+# Groq's current production model list, 2026-07-05) to keep a 4-model,
+# mixed-family lineup.
+# llama-3.3-70b-versatile and llama-3.1-8b-instant are active today but Groq
+# has announced their deprecation for 2026-08-16 on free/developer tiers —
+# revisit before that date.
 MODELS = {
-    "llama3-70b":   "llama-3.3-70b-versatile",
-    "llama3-8b":    "llama-3.1-8b-instant",
-    "gemma2-9b":    "gemma2-9b-it",
-    "mixtral-8x7b": "mixtral-8x7b-32768",
+    "llama3-70b":  "llama-3.3-70b-versatile",
+    "llama3-8b":   "llama-3.1-8b-instant",
+    "gpt-oss-20b":  "openai/gpt-oss-20b",
+    "gpt-oss-120b": "openai/gpt-oss-120b",
 }
 
 LANGUAGES = ["bengali", "hindi", "english"]
 
 JUDGE_MODEL = "llama-3.1-8b-instant"   # Fast model for scoring
+JUDGE_MAX_TOKENS = 200                 # headroom so the JSON score object isn't truncated
+
+RETRYABLE_ERRORS = (APIConnectionError, APITimeoutError, InternalServerError, RateLimitError)
+
+
+async def call_with_retry(coro_fn, *args, retries: int = 3, base_delay: float = 1.0, **kwargs):
+    """Call an async API function, retrying transient errors with exponential backoff."""
+    for attempt in range(retries):
+        try:
+            return await coro_fn(*args, **kwargs)
+        except RETRYABLE_ERRORS as e:
+            if attempt == retries - 1:
+                raise
+            delay = base_delay * (2 ** attempt)
+            logger.warning(
+                f"Transient API error ({type(e).__name__}): {e}. "
+                f"Retrying in {delay:.1f}s (attempt {attempt + 1}/{retries})"
+            )
+            await asyncio.sleep(delay)
 
 # ── Judge Prompt ──────────────────────────────────────────────────────────────
 
@@ -85,7 +119,8 @@ Be concise but complete."""
     start = time.perf_counter()
     try:
         resp = await asyncio.wait_for(
-            client.chat.completions.create(
+            call_with_retry(
+                client.chat.completions.create,
                 model=model_id,
                 messages=[
                     {"role": "system", "content": system},
@@ -106,6 +141,25 @@ Be concise but complete."""
         return f"[ERROR: {str(e)[:100]}]", 0, 0
 
 
+REQUIRED_SCORE_KEYS = {"correctness", "completeness", "language_quality", "clarity"}
+
+
+def _degraded_scores(reason: str, raw: str) -> dict:
+    """A judge record that could not be scored. Scores are None (not 0.5) so
+    they can't silently blend into an aggregate mean — callers must explicitly
+    handle judge_parse_failed records."""
+    logger.warning(f"Judge output rejected ({reason}): {raw[:200]!r}")
+    return {
+        "correctness": None,
+        "completeness": None,
+        "language_quality": None,
+        "clarity": None,
+        "overall": None,
+        "judge_parse_failed": True,
+        "judge_raw_output": raw[:500],
+    }
+
+
 async def judge_response(
     client: AsyncGroq,
     question: str,
@@ -115,8 +169,6 @@ async def judge_response(
     category: str,
 ) -> dict:
     """Score a model response using LLM-as-judge."""
-    import re
-
     if response.startswith("[ERROR") or response.startswith("[TIMEOUT"):
         return {
             "correctness": 0.0,
@@ -124,6 +176,7 @@ async def judge_response(
             "language_quality": 0.0,
             "clarity": 0.0,
             "overall": 0.0,
+            "judge_parse_failed": False,
         }
 
     prompt = JUDGE_PROMPT.format(
@@ -134,33 +187,48 @@ async def judge_response(
         category=category,
     )
 
+    raw = ""
     try:
-        resp = await client.chat.completions.create(
+        resp = await call_with_retry(
+            client.chat.completions.create,
             model=JUDGE_MODEL,
             messages=[{"role": "user", "content": prompt}],
-            max_tokens=100,
+            max_tokens=JUDGE_MAX_TOKENS,
             temperature=0.0,
         )
         raw = resp.choices[0].message.content.strip()
-        match = re.search(r"\{[^}]+\}", raw)
-        if match:
-            scores = json.loads(match.group())
-            c = round(float(scores.get("correctness",     0.5)), 3)
-            co = round(float(scores.get("completeness",    0.5)), 3)
-            lq = round(float(scores.get("language_quality",0.5)), 3)
-            cl = round(float(scores.get("clarity",         0.5)), 3)
-            overall = round((c + co + lq + cl) / 4, 3)
-            return {
-                "correctness":      max(0.0, min(1.0, c)),
-                "completeness":     max(0.0, min(1.0, co)),
-                "language_quality": max(0.0, min(1.0, lq)),
-                "clarity":          max(0.0, min(1.0, cl)),
-                "overall":          max(0.0, min(1.0, overall)),
-            }
     except Exception as e:
-        logger.warning(f"Judge failed: {e}")
+        return _degraded_scores(f"judge call failed: {e}", raw)
 
-    return {"correctness": 0.5, "completeness": 0.5, "language_quality": 0.5, "clarity": 0.5, "overall": 0.5}
+    match = re.search(r"\{[^}]+\}", raw)
+    if not match:
+        return _degraded_scores("no JSON object found (likely truncated)", raw)
+
+    try:
+        scores = json.loads(match.group())
+    except json.JSONDecodeError as e:
+        return _degraded_scores(f"invalid JSON ({e})", raw)
+
+    if not REQUIRED_SCORE_KEYS.issubset(scores.keys()):
+        missing = REQUIRED_SCORE_KEYS - scores.keys()
+        return _degraded_scores(f"missing keys {missing}", raw)
+
+    try:
+        c  = max(0.0, min(1.0, round(float(scores["correctness"]),      3)))
+        co = max(0.0, min(1.0, round(float(scores["completeness"]),     3)))
+        lq = max(0.0, min(1.0, round(float(scores["language_quality"]), 3)))
+        cl = max(0.0, min(1.0, round(float(scores["clarity"]),          3)))
+    except (TypeError, ValueError) as e:
+        return _degraded_scores(f"non-numeric score value ({e})", raw)
+
+    return {
+        "correctness":      c,
+        "completeness":     co,
+        "language_quality": lq,
+        "clarity":          cl,
+        "overall":          round((c + co + lq + cl) / 4, 3),
+        "judge_parse_failed": False,
+    }
 
 
 async def evaluate_question(
@@ -172,6 +240,9 @@ async def evaluate_question(
     """Run one question through one model and return a result record."""
     logger.info(f"  [{model_name}] {q['id']}")
 
+    # q["requires_tool"] is intentionally not read here -- it's informational
+    # only. Every question is answered via plain chat completion regardless;
+    # see README.md#known-limitations.
     response, latency_ms, tokens = await call_model(
         client, model_id, q["question"], q["language"]
     )
@@ -254,8 +325,9 @@ async def run_evaluation(
             result = await evaluate_question(client, model_name, model_id, q)
             results.append(result)
             done += 1
-            avg = sum(r["scores"]["overall"] for r in results[-10:]) / min(10, len(results))
-            logger.info(f"  Progress: {done}/{total} | Running avg: {avg:.3f}")
+            recent = [r["scores"]["overall"] for r in results[-10:] if not r["scores"]["judge_parse_failed"]]
+            avg_str = f"{sum(recent) / len(recent):.3f}" if recent else "N/A (all degraded)"
+            logger.info(f"  Progress: {done}/{total} | Running avg: {avg_str}")
             await asyncio.sleep(0.3)   # Rate limit buffer
 
     # Save results

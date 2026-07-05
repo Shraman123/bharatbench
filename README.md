@@ -1,11 +1,17 @@
 # BharatBench 🇮🇳
 
-**The First Evaluation Benchmark for AI Models on Indic Language Tasks**
-
-A rigorous benchmark evaluating LLMs on Bengali, Hindi, and English across 5 task categories,
+An evaluation benchmark for LLMs on Bengali, Hindi, and English across 5 task categories,
 with automated LLM-as-judge scoring and language gap analysis.
 
-**Paper:** Shraman Hazra, 2025. *BharatBench: Benchmarking Large Language Models on Indic Language Reasoning Tasks*
+This is one benchmark among several covering Indic languages (see prior work
+like IndicGLUE, IndicXTREME, and MILU) — its contribution is a small,
+hand-written question set focused specifically on comparing math/reasoning/
+knowledge/instruction/code performance across Bengali, Hindi, and English.
+See [Known Limitations](#known-limitations) before drawing conclusions from
+its results.
+
+**Status:** Work in progress. No paper has been published yet; the citation
+below is a placeholder for when/if one is.
 
 ---
 
@@ -13,10 +19,10 @@ with automated LLM-as-judge scoring and language gap analysis.
 
 | Language | Questions | Categories |
 |---|---|---|
-| Bengali | 40 | math, reasoning, knowledge, instruction, code |
-| Hindi   | 40 | math, reasoning, knowledge, instruction, code |
-| English | 40 | math, reasoning, knowledge, instruction, code |
-| **Total** | **120** | 5 categories × 3 difficulties |
+| Bengali | 23 | math, reasoning, knowledge, instruction, code |
+| Hindi   | 22 | math, reasoning, knowledge, instruction, code |
+| English | 22 | math, reasoning, knowledge, instruction, code |
+| **Total** | **67** | 5 categories, uneven distribution per language (see `scripts/validate_dataset.py`) |
 
 ## Models Evaluated
 
@@ -24,8 +30,15 @@ with automated LLM-as-judge scoring and language gap analysis.
 |---|---|
 | llama-3.3-70b-versatile | llama3-70b |
 | llama-3.1-8b-instant | llama3-8b |
-| gemma2-9b-it | gemma2-9b |
-| mixtral-8x7b-32768 | mixtral-8x7b |
+| openai/gpt-oss-20b | gpt-oss-20b |
+| openai/gpt-oss-120b | gpt-oss-120b |
+
+`gemma2-9b-it` and `mixtral-8x7b-32768` were deprecated by Groq (2025-10-08
+and 2025-03-20 respectively) and are no longer callable; replaced above with
+Groq's current production models as of 2026-07-05. Note also that
+`llama-3.3-70b-versatile` and `llama-3.1-8b-instant` — the latter is also the
+judge model, see limitations — have a deprecation announced for 2026-08-16 on
+free/developer tiers; revisit before then.
 
 ## Scoring Dimensions
 
@@ -90,25 +103,81 @@ python eval/analyze.py results/eval_TIMESTAMP.json --dashboard
 ```
 bharatbench/
 ├── dataset/
-│   ├── bengali/questions.json    (40 questions)
-│   ├── hindi/questions.json      (40 questions)
-│   └── english/questions.json   (40 questions)
+│   ├── schema.json           # JSON Schema for question entries (requires provenance)
+│   ├── bengali/questions.json    (23 questions)
+│   ├── hindi/questions.json      (22 questions)
+│   └── english/questions.json    (22 questions)
 ├── eval/
 │   ├── runner.py      # Multi-model evaluation runner
 │   └── analyze.py     # Results analysis + LaTeX + dashboard
-├── results/           # JSON output files (gitignored)
-└── paper/             # LaTeX paper (Week 3)
+├── scripts/
+│   ├── validate_dataset.py   # Schema/provenance validation, report-only
+│   ├── decontaminate.py      # n-gram overlap check against a reference corpus
+│   └── package_for_hf.py     # Local HF-datasets packaging (does not upload)
+├── tests/             # Smoke tests, stubbed Groq client, no API key needed
+└── results/            # JSON output files (gitignored)
 ```
+
+There is no `paper/` folder yet — a prior version of this README referenced
+one that was never created.
+
+---
+
+## Known Limitations
+
+- **Judge/subject model overlap.** `llama-3.1-8b-instant` is both one of the
+  four models being evaluated and the LLM-as-judge scoring every response,
+  including its own. This is a known source of self-preference bias in
+  LLM-as-judge setups — treat that model's scores with extra skepticism until
+  the judge is decoupled from the model pool (e.g. a fixed, stronger,
+  never-evaluated judge model).
+- **Non-parallel language question sets.** The Bengali, Hindi, and English
+  question sets are not translations of each other — they cover different
+  topics (e.g. Bengali asks about Tagore and the Bangladesh Liberation War;
+  Hindi asks about Indian AI companies; English asks about RAG/ReAct). The
+  "language gap" metric therefore conflates language-capability differences
+  with topic/question-difficulty differences. Read gap numbers as a rough
+  signal, not a controlled measurement, until the sets are made parallel.
+- **Small, unverified-provenance dataset.** 67 questions total, none currently
+  carry a `source`/provenance field (tracked mechanically by
+  `scripts/validate_dataset.py`, not yet resolved). An engineering audit also
+  surfaced at least one question with a reference answer that doesn't fully
+  resolve the question asked — dataset content is intentionally out of scope
+  for this pass and hasn't been corrected.
+- **`requires_tool` is not enforced.** Questions flagged as needing a
+  calculator or code execution are currently answered via plain chat
+  completion with no tool augmentation. The field is informational only;
+  wiring up real tool execution would need a sandboxed code-execution path
+  and a separate scoring rubric for tool-augmented answers, which is out of
+  scope for the current harness.
 
 ---
 
 ## Citation
+
+No paper has been published for this project. If you use this benchmark,
+please cite the repository directly rather than the placeholder below, which
+is left here only in case a paper is published later:
 
 ```bibtex
 @misc{hazra2025bharatbench,
   title   = {BharatBench: Benchmarking Large Language Models on Indic Language Tasks},
   author  = {Hazra, Shraman},
   year    = {2025},
-  url     = {https://arxiv.org/abs/XXXX.XXXXX}
+  note    = {Unpublished. https://github.com/Shraman123/bharatbench}
 }
 ```
+
+---
+
+## Contributing
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) — in particular, all new questions
+must include a `source`/provenance field and be human-verified.
+
+## License
+
+[MIT](LICENSE) for the code. The dataset content (questions/reference
+answers) is included under the same license for now; if you plan to reuse
+the dataset specifically, check back here as this may be revisited with a
+data-specific license.

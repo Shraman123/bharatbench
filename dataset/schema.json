@@ -1,0 +1,54 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/Shraman123/bharatbench/blob/main/dataset/schema.json",
+  "title": "BharatBench question",
+  "description": "Schema for entries in dataset/{language}/questions.json. The 'source' field is required for all new questions so provenance/human-verification can be audited -- see CONTRIBUTING.md.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id",
+    "language",
+    "category",
+    "difficulty",
+    "question",
+    "reference",
+    "requires_tool",
+    "source"
+  ],
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z]{2,3}_[a-z]+_[0-9]{3}$",
+      "description": "e.g. bn_math_001"
+    },
+    "language": {
+      "type": "string",
+      "enum": ["bengali", "hindi", "english"]
+    },
+    "category": {
+      "type": "string",
+      "enum": ["math", "reasoning", "knowledge", "instruction", "code"]
+    },
+    "difficulty": {
+      "type": "string",
+      "enum": ["easy", "medium", "hard"]
+    },
+    "question": {
+      "type": "string",
+      "minLength": 1
+    },
+    "reference": {
+      "type": "string",
+      "minLength": 1
+    },
+    "requires_tool": {
+      "type": "boolean",
+      "description": "Informational only -- NOT currently enforced by eval/runner.py. Questions marked true are still answered via plain chat completion, with no actual calculator/code-execution tool call. See README.md#known-limitations."
+    },
+    "source": {
+      "type": "string",
+      "minLength": 3,
+      "description": "Provenance of the question: who wrote/adapted it, and from where (e.g. a textbook, an original hand-written item, a contributor handle). Must not be empty or a placeholder."
+    }
+  }
+}
