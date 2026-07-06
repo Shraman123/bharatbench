@@ -124,6 +124,39 @@ python eval/analyze.py results/eval_TIMESTAMP.json --dashboard
 
 ---
 
+## LangGraph Evaluation Pipeline
+
+`eval/pipeline.py` reimplements the same eval flow as `eval/runner.py` as an
+explicit, inspectable [LangGraph](https://github.com/langchain-ai/langgraph)
+graph instead of one function doing everything inline:
+
+```mermaid
+graph LR
+    START((start)) --> generate
+    generate --> judge
+    judge --> verify
+    verify --> aggregate
+    aggregate --> END((end))
+```
+
+- **generate** — runs every (model, question) pair through the subject model. No scoring yet.
+- **judge** — scores each generated response with the configured judge (`eval/config.py`'s `JUDGE`).
+- **verify** — *new*, not a re-scoring step. Checks internal consistency between what `generate` and `judge` produced (e.g. "a failed model call must score `0.0`, not something else"; "a `judge_parse_failed` record must have `None` scores, not partial ones") and flags anomalies. It does not change any score — scoring semantics are identical to `runner.py`.
+- **aggregate** — summarizes the run using the same `eval/analyze.py` functions the CLI/service use, so results are comparable across all three entry points. Always includes a `language_gap_caveat` field for the same reason the FastAPI service's `/report` endpoint does — see [Known Limitations](#known-limitations).
+
+Run it the same way as `runner.py`:
+
+```bash
+python eval/pipeline.py --quick
+python eval/pipeline.py --models llama3-70b sarvam-105b --langs bengali hindi
+```
+
+Results are saved to `results/pipeline_TIMESTAMP.json` in the same shape
+`runner.py` produces (plus `aggregate` and per-record `verification_ok`/
+`verification_issues` fields), so `eval/analyze.py` can read either file.
+
+---
+
 ## Key Research Questions
 
 1. **Language Gap**: How much do models underperform on Bengali/Hindi vs English?
@@ -144,6 +177,7 @@ bharatbench/
 │   └── english/questions.json    (22 questions)
 ├── eval/
 │   ├── runner.py      # Multi-model evaluation runner
+│   ├── pipeline.py    # Same flow as a LangGraph graph: generate->judge->verify->aggregate
 │   ├── analyze.py     # Results analysis + LaTeX + dashboard
 │   ├── config.py      # Model + judge registry (provider, model_id)
 │   └── providers/     # Provider abstraction: groq, sarvam, openai-compatible
