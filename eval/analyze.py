@@ -22,6 +22,8 @@ import argparse
 from pathlib import Path
 from collections import defaultdict
 
+from stats import bootstrap_ci, bootstrap_mean_diff_test, reliability_caveat
+
 # Windows consoles default to cp1252, which can't encode the box-drawing
 # characters used below and crashes with UnicodeEncodeError. Force UTF-8 on
 # stdout so this runs the same on Windows, macOS, and Linux.
@@ -46,21 +48,61 @@ def degraded(results: list) -> list:
 
 
 def aggregate(results: list, group_by: list) -> dict:
-    """Group results and compute mean scores. Callers must pass usable(results)."""
+    """Group results and compute mean scores + a 95% bootstrap CI around the
+    mean. Callers must pass usable(results). CI is None when count == 0;
+    a single-point group has ci_low == ci_high == mean (see stats.py)."""
     groups = defaultdict(list)
     for r in results:
         key = tuple(r[g] for g in group_by)
         groups[key].append(r["scores"]["overall"])
 
-    return {
-        k: {
-            "mean":   round(sum(v) / len(v), 4),
-            "count":  len(v),
-            "min":    round(min(v), 4),
-            "max":    round(max(v), 4),
+    out = {}
+    for k, v in groups.items():
+        ci = bootstrap_ci(v)
+        out[k] = {
+            "mean":    round(sum(v) / len(v), 4),
+            "count":   len(v),
+            "min":     round(min(v), 4),
+            "max":     round(max(v), 4),
+            "ci_low":  ci["ci_low"],
+            "ci_high": ci["ci_high"],
+            "reliability_caveat": reliability_caveat(len(v)),
         }
-        for k, v in groups.items()
-    }
+    return out
+
+
+def pairwise_significance(results: list, group_field: str = "model") -> list:
+    """Bootstrap comparison of every pair of `group_field` values (e.g. every
+    pair of models) on "overall" score. Pairs by question_id when both sides
+    share question IDs -- a paired bootstrap has more statistical power and
+    is the right comparison when every model answered the same questions --
+    and falls back to an unpaired two-sample bootstrap otherwise (e.g. runs
+    with different --limit values per model). See stats.py for the
+    significance floor (MIN_RELIABLE_N) that keeps small-sample comparisons
+    from being over-stated."""
+    scores_by_group = defaultdict(list)
+    ids_by_group = defaultdict(list)
+    for r in results:
+        key = r[group_field]
+        scores_by_group[key].append(r["scores"]["overall"])
+        ids_by_group[key].append(r["question_id"])
+
+    names = sorted(scores_by_group.keys())
+    comparisons = []
+    for i, a_name in enumerate(names):
+        for b_name in names[i + 1:]:
+            result = bootstrap_mean_diff_test(
+                scores_by_group[a_name], scores_by_group[b_name],
+                ids_a=ids_by_group[a_name], ids_b=ids_by_group[b_name],
+            )
+            n_for_caveat = result.get("n") if result["paired"] else min(result.get("n_a", 0), result.get("n_b", 0))
+            comparisons.append({
+                group_field + "_a": a_name,
+                group_field + "_b": b_name,
+                **result,
+                "reliability_caveat": reliability_caveat(n_for_caveat),
+            })
+    return comparisons
 
 
 def compute_language_gap(results: list) -> dict:
@@ -155,6 +197,7 @@ def generate_dashboard_json(metadata: dict, results: list, gaps: dict) -> dict:
         },
         "by_model_language": {str(k): v for k, v in by_model_lang.items()},
         "language_gaps":     gaps,
+        "pairwise_model_comparisons": pairwise_significance(good, "model"),
         "failures":          find_failures(good),
         "total_evaluations": len(results),
         "usable_evaluations": len(good),
@@ -179,6 +222,30 @@ def print_report(metadata: dict, results: list) -> None:
     print()
 
     gaps = compute_language_gap(good)
+
+    by_model = aggregate(good, ["model"])
+    print("── MODEL COMPARISON (mean, 95% bootstrap CI, n) ────────")
+    print(f"{'Model':<20} {'Mean':>8} {'95% CI':>18} {'n':>5}")
+    print("-" * 55)
+    for (model,), g in sorted(by_model.items()):
+        ci_str = f"[{g['ci_low']:.3f}, {g['ci_high']:.3f}]"
+        print(f"{model:<20} {g['mean']:>8.3f} {ci_str:>18} {g['count']:>5}")
+        if g["reliability_caveat"]:
+            print(f"    ⚠ {g['reliability_caveat']}")
+
+    print()
+    comparisons = pairwise_significance(good, "model")
+    if comparisons:
+        print("── PAIRWISE MODEL COMPARISON (bootstrap, * = p<0.05 and n>=10) ─")
+        print(f"{'A':<16} {'B':<16} {'A-B diff':>10} {'95% CI':>18} {'p':>7}")
+        print("-" * 72)
+        for c in comparisons:
+            flag = " *" if c["significant"] else ""
+            ci_str = f"[{c['ci_low']:.3f}, {c['ci_high']:.3f}]"
+            print(f"{c['model_a']:<16} {c['model_b']:<16} {c['mean_diff']:>+10.3f} {ci_str:>18} {c['p_value']:>7.3f}{flag}")
+            if c["reliability_caveat"]:
+                print(f"    ⚠ {c['reliability_caveat']}")
+        print()
 
     print("── LANGUAGE GAP ANALYSIS ──────────────────────────────")
     print(f"{'Model':<20} {'English':>8} {'Bengali':>8} {'Hindi':>8} {'BN Gap':>8} {'HI Gap':>8}")
