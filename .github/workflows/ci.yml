@@ -22,5 +22,5 @@ jobs:
       - name: Lint (ruff)
         run: ruff check .
 
-      - name: Smoke test (stubbed Groq client, no API key needed)
+      - name: Test (stubbed providers + API tests, no API keys needed)
         run: pytest tests/ -v

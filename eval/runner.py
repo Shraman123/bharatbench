@@ -259,8 +259,12 @@ async def run_evaluation(
     languages: list,
     limit: Optional[int] = None,
     output_tag: str = "",
+    on_progress: Optional[callable] = None,
 ) -> str:
-    """Main evaluation loop. Returns path to results file."""
+    """Main evaluation loop. Returns path to results file.
+
+    on_progress(done, total), if given, is called after every question --
+    used by service/jobs.py to report progress without polling logs."""
     questions = load_questions(languages, limit)
 
     if not questions:
@@ -290,6 +294,8 @@ async def run_evaluation(
             recent = [r["scores"]["overall"] for r in results[-10:] if not r["scores"]["judge_parse_failed"]]
             avg_str = f"{sum(recent) / len(recent):.3f}" if recent else "N/A (all degraded)"
             logger.info(f"  Progress: {done}/{total} | Running avg: {avg_str}")
+            if on_progress:
+                on_progress(done, total)
             await asyncio.sleep(0.3)   # Rate limit buffer
 
     # Save results
