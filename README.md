@@ -124,6 +124,53 @@ python eval/analyze.py results/eval_TIMESTAMP.json --dashboard
 
 ---
 
+## FastAPI Evaluation Service
+
+A REST wrapper around the harness for submitting runs and polling results
+without a terminal (`service/`).
+
+```bash
+pip install -r requirements.txt
+export GROQ_API_KEY=...          # + whichever other provider keys you need
+uvicorn service.app:app --reload
+```
+
+Or with Docker:
+
+```bash
+docker build -t bharatbench-service .
+docker run -p 8000:8000 --env-file .env bharatbench-service
+```
+
+Endpoints:
+
+| Method | Path | Purpose |
+|---|---|---|
+| GET | `/health` | Liveness check |
+| POST | `/eval/runs` | Submit a run: `{"models": [...], "languages": [...], "limit": null}` -> `202` with `run_id` |
+| GET | `/eval/runs` | List all runs known to this process |
+| GET | `/eval/runs/{run_id}` | Status + progress (`queued`/`running`/`completed`/`failed`) |
+| GET | `/eval/runs/{run_id}/results` | Raw per-question results (`409` until completed) |
+| GET | `/eval/runs/{run_id}/report` | Aggregated report incl. `language_gap_caveat` field |
+
+Requests are validated with Pydantic (unknown model aliases/languages ->
+`422` with the valid set listed in the error). The `/report` response always
+includes a `language_gap_caveat` string stating that the language sets
+aren't parallel, so anything built on top of the API surfaces that
+limitation rather than hiding it behind a raw number — see
+[Known Limitations](#known-limitations).
+
+**Job store is in-memory and single-process.** Runs are lost on restart and
+aren't shared across worker processes — fine for one instance, but a real
+multi-worker production deployment would want a shared store (DB/Redis) and
+a task queue (Celery/RQ/arq) in place of `asyncio.create_task`. This is a
+known scope boundary, not an oversight.
+
+API tests (`tests/test_service.py`) stub every provider the same way
+`tests/test_smoke.py` does — no real API key or network access needed.
+
+---
+
 ## Key Research Questions
 
 1. **Language Gap**: How much do models underperform on Bengali/Hindi vs English?
@@ -147,11 +194,13 @@ bharatbench/
 │   ├── analyze.py     # Results analysis + LaTeX + dashboard
 │   ├── config.py      # Model + judge registry (provider, model_id)
 │   └── providers/     # Provider abstraction: groq, sarvam, openai-compatible
+├── service/           # FastAPI wrapper: submit/poll/fetch runs over HTTP
 ├── scripts/
 │   ├── validate_dataset.py   # Schema/provenance validation, report-only
 │   ├── decontaminate.py      # n-gram overlap check against a reference corpus
 │   └── package_for_hf.py     # Local HF-datasets packaging (does not upload)
-├── tests/             # Smoke tests, stubbed providers, no API key needed
+├── tests/             # Smoke + API tests, stubbed providers, no API key needed
+├── Dockerfile
 └── results/            # JSON output files (gitignored)
 ```
 
