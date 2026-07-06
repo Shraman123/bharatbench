@@ -124,4 +124,5 @@ def get_run_report(run_id: str) -> ReportResponse:
             "by_category": {str(k): v for k, v in analyze.aggregate(good, ["category"]).items()},
         },
         language_gaps=analyze.compute_language_gap(good),
+        pairwise_model_comparisons=analyze.pairwise_significance(good, "model"),
     )

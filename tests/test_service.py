@@ -77,6 +77,22 @@ def test_submit_status_results_report_roundtrip(client):
     assert "language_gap_caveat" in report and len(report["language_gap_caveat"]) > 0
     assert "NOT parallel" in report["language_gap_caveat"]
     assert report["usable_evaluations"] == 2
+    assert report["pairwise_model_comparisons"] == []  # only one model in this run
+
+
+def test_report_includes_pairwise_comparisons_for_multi_model_run(client):
+    resp = client.post(
+        "/eval/runs",
+        json={"models": ["llama3-8b", "llama3-70b"], "languages": ["english"], "limit": 2},
+    )
+    run_id = resp.json()["run_id"]
+    _wait_for_completion(client, run_id)
+
+    report = client.get(f"/eval/runs/{run_id}/report").json()
+    assert len(report["pairwise_model_comparisons"]) == 1
+    comparison = report["pairwise_model_comparisons"][0]
+    assert {comparison["model_a"], comparison["model_b"]} == {"llama3-8b", "llama3-70b"}
+    assert "p_value" in comparison and "significant" in comparison
 
 
 def test_results_before_completion_returns_409(client):

@@ -122,6 +122,21 @@ python eval/analyze.py results/eval_TIMESTAMP.json --latex
 python eval/analyze.py results/eval_TIMESTAMP.json --dashboard
 ```
 
+### Statistical rigor: confidence intervals and significance testing
+
+Every aggregate score (`eval/analyze.py`'s `aggregate()`, used by the CLI report, the dashboard JSON, the FastAPI service's `/report` endpoint, and the LangGraph pipeline's `aggregate` node -- all four surfaces automatically, since they all call the same function) now comes with a 95% **bootstrap confidence interval**, not just a bare mean. `eval/stats.py` implements this with plain-stdlib percentile bootstrap resampling (no scipy/numpy) -- appropriate here since this dataset is small (67 questions; some category/language cells have as few as 2), where a normal-approximation t-test would be a less honest choice than a distribution-free bootstrap.
+
+There's also a new **pairwise model comparison**: for every pair of models in a run, `pairwise_significance()` bootstrap-tests whether their score difference is real. When both models answered the same questions (the normal case), it pairs by `question_id` for a more powerful paired test; otherwise it falls back to an unpaired two-sample comparison. A comparison is only ever labeled `"significant": true` when **both** `p < 0.05` **and** the sample size is at least 10 (`stats.MIN_RELIABLE_N`) -- a low p-value on a handful of points is not something this project will call significant, and every result includes a `reliability_caveat` string when it's below that floor rather than silently reporting a number that looks more confident than it is.
+
+```bash
+# Now included by default in the printed report:
+python eval/analyze.py results/eval_TIMESTAMP.json
+# ── MODEL COMPARISON (mean, 95% bootstrap CI, n) ────────
+# ── PAIRWISE MODEL COMPARISON (bootstrap, * = p<0.05 and n>=10) ─
+```
+
+Bootstrap resampling uses a fixed default seed, so re-running `analyze.py` on the same results file gives the same CI/p-values every time -- reports are reproducible, not jittery.
+
 ---
 
 ## FastAPI Evaluation Service
@@ -258,6 +273,7 @@ bharatbench/
 │   ├── runner.py      # Multi-model evaluation runner
 │   ├── pipeline.py    # Same flow as a LangGraph graph: generate->judge->verify->aggregate
 │   ├── analyze.py     # Results analysis + LaTeX + dashboard
+│   ├── stats.py       # Bootstrap CIs + pairwise significance testing
 │   ├── config.py      # Model + judge registry (provider, model_id)
 │   └── providers/     # Provider abstraction: groq, sarvam, openai-compatible
 ├── service/           # FastAPI wrapper: submit/poll/fetch runs over HTTP

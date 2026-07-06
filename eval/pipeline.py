@@ -177,6 +177,7 @@ async def aggregate_node(state: PipelineState) -> dict:
         "by_category": {str(k): v for k, v in analyze.aggregate(good, ["category"]).items()},
         "language_gaps": analyze.compute_language_gap(good),
         "language_gap_caveat": LANGUAGE_GAP_CAVEAT,
+        "pairwise_model_comparisons": analyze.pairwise_significance(good, "model"),
     }
     logger.info(f"[aggregate] {summary['usable_evaluations']} usable, "
                 f"{summary['degraded_evaluations']} degraded")

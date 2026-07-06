@@ -51,6 +51,8 @@ async def test_pipeline_runs_all_four_stages(tmp_path, monkeypatch):
     assert agg["degraded_evaluations"] == 0
     assert agg["verification_issue_count"] == 0
     assert "NOT parallel" in agg["language_gap_caveat"]
+    assert agg["pairwise_model_comparisons"] == []  # only one model in this run
+    assert "ci_low" in agg["by_model"]["('llama3-8b',)"]
 
 
 @pytest.mark.asyncio
