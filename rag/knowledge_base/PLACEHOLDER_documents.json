@@ -1,0 +1,18 @@
+[
+  {
+    "id": "placeholder_doc_001",
+    "language": "english",
+    "title": "PLACEHOLDER DOCUMENT -- NOT REAL CONTENT",
+    "text": "This is placeholder text used only to exercise the RAG pipeline's embedding, indexing, and retrieval code paths in tests. It is not a real knowledge-base document and must not be used for actual evaluation. Replace this file with real, provenance-tracked Indic-language knowledge-base documents before using rag/pipeline.py for anything real.",
+    "source": "PLACEHOLDER -- fabricated for infrastructure testing only, not a real source",
+    "placeholder": true
+  },
+  {
+    "id": "placeholder_doc_002",
+    "language": "english",
+    "title": "SECOND PLACEHOLDER DOCUMENT -- NOT REAL CONTENT",
+    "text": "A second placeholder document, distinct from the first, so retrieval and reranking have more than one candidate to choose between during infrastructure testing. Still not real content.",
+    "source": "PLACEHOLDER -- fabricated for infrastructure testing only, not a real source",
+    "placeholder": true
+  }
+]

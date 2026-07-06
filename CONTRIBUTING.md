@@ -5,7 +5,7 @@
 1. Fork and clone the repo.
 2. `pip install -r requirements.txt -r requirements-dev.txt`
 3. Lint before committing: `ruff check .`
-4. Run the smoke test (no API key required, uses a stubbed Groq client): `pytest tests/`
+4. Run the test suite (no API key required, uses stubbed providers): `pytest tests/`
 5. Keep PRs focused — one logical change per PR, with a clear description of what and why.
 
 ## Contributing benchmark questions
@@ -32,6 +32,20 @@ human-sourced and human-verified. To keep that true as the dataset grows:
 - Maintainers reviewing dataset PRs should spot-check reference answers, not
   just schema validity — a well-formed JSON object can still contain a wrong
   answer.
+
+## Contributing RAG knowledge-base content
+
+`rag/knowledge_base/` ships with placeholder-only content (see its own
+README). The same rules as above apply to real documents and questions
+added there:
+
+- Every document (`rag/kb_schema.json`) and question (`rag/schema.json`)
+  needs a real `source` field -- no LLM-generated or undisclosed content.
+- Run `python scripts/validate_rag_content.py --reject-placeholders` before
+  submitting -- it fails on both schema violations and any remaining
+  `"placeholder": true` entries.
+- RAG questions also need `relevant_doc_ids` pointing at real document IDs,
+  so retrieval quality (not just final-answer quality) can be scored.
 
 ## Reporting issues
 

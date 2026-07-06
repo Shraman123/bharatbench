@@ -1,0 +1,61 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/Shraman123/bharatbench/blob/main/rag/schema.json",
+  "title": "BharatBench RAG question",
+  "description": "Schema for retrieval-augmented question entries (rag/questions/*.json). Mirrors dataset/schema.json's provenance requirement -- 'source' is required for the same reason: RAG question credibility depends on knowing where a question and its reference answer came from.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id",
+    "language",
+    "category",
+    "difficulty",
+    "question",
+    "reference",
+    "source",
+    "relevant_doc_ids"
+  ],
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z]{2,3}_rag_[a-z0-9_]+$",
+      "description": "e.g. en_rag_placeholder_001"
+    },
+    "language": {
+      "type": "string",
+      "enum": ["bengali", "hindi", "english"]
+    },
+    "category": {
+      "const": "rag",
+      "description": "Always 'rag' -- distinguishes this from dataset/schema.json's 5 categories."
+    },
+    "difficulty": {
+      "type": "string",
+      "enum": ["easy", "medium", "hard"]
+    },
+    "question": {
+      "type": "string",
+      "minLength": 1
+    },
+    "reference": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Ground-truth answer, gradeable the same way dataset/schema.json's reference is (LLM-as-judge)."
+    },
+    "source": {
+      "type": "string",
+      "minLength": 3,
+      "description": "Provenance of the question itself (who wrote it, from where). See dataset/schema.json and CONTRIBUTING.md."
+    },
+    "relevant_doc_ids": {
+      "type": "array",
+      "items": {"type": "string"},
+      "minItems": 1,
+      "description": "IDs (from rag/kb_schema.json documents) that should be retrieved to answer this question correctly. Used to score retrieval quality (did the pipeline actually fetch a relevant doc?), separately from final-answer quality."
+    },
+    "placeholder": {
+      "type": "boolean",
+      "description": "true for scaffolding/example entries only (see rag/knowledge_base/PLACEHOLDER_*.json). Must be absent or false for real questions."
+    }
+  }
+}
