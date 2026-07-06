@@ -1,0 +1,13 @@
+[
+  {
+    "id": "en_rag_placeholder_001",
+    "language": "english",
+    "category": "rag",
+    "difficulty": "easy",
+    "question": "PLACEHOLDER QUESTION -- what does the first placeholder document say it is?",
+    "reference": "PLACEHOLDER ANSWER -- it says it is placeholder text used only to exercise the RAG pipeline's code paths, not a real knowledge-base document.",
+    "source": "PLACEHOLDER -- fabricated for infrastructure testing only, not a real question",
+    "relevant_doc_ids": ["placeholder_doc_001"],
+    "placeholder": true
+  }
+]

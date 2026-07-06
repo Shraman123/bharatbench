@@ -1,0 +1,37 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/Shraman123/bharatbench/blob/main/rag/kb_schema.json",
+  "title": "BharatBench RAG knowledge-base document",
+  "description": "Schema for knowledge-base documents the RAG pipeline retrieves from (rag/knowledge_base/*.json). Requires 'source' for the same provenance reason as questions -- a knowledge base of unknown provenance undermines RAG eval credibility just as much as unverified questions do.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "language", "title", "text", "source"],
+  "properties": {
+    "id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "language": {
+      "type": "string",
+      "enum": ["bengali", "hindi", "english"]
+    },
+    "title": {
+      "type": "string",
+      "minLength": 1
+    },
+    "text": {
+      "type": "string",
+      "minLength": 1,
+      "description": "The document/passage content to embed and retrieve."
+    },
+    "source": {
+      "type": "string",
+      "minLength": 3,
+      "description": "Where this document came from (URL, publication, author). Required -- see CONTRIBUTING.md."
+    },
+    "placeholder": {
+      "type": "boolean",
+      "description": "true for scaffolding/example entries only. Must be absent or false for real documents."
+    }
+  }
+}
