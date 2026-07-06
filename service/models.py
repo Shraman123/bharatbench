@@ -80,3 +80,4 @@ class ReportResponse(BaseModel):
     degraded_evaluations: int
     summary: dict
     language_gaps: dict
+    pairwise_model_comparisons: list
