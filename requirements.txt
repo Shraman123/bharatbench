@@ -1,2 +1,4 @@
 groq==0.13.0
+openai==2.44.0
+sarvamai==0.1.28
 python-dotenv==1.0.1

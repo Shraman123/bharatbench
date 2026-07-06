@@ -24,25 +24,56 @@ below is a placeholder for when/if one is.
 | English | 22 | math, reasoning, knowledge, instruction, code |
 | **Total** | **67** | 5 categories, uneven distribution per language (see `scripts/validate_dataset.py`) |
 
-## Models Evaluated
+## Providers & Models Evaluated
 
-| Model ID | Alias |
-|---|---|
-| llama-3.3-70b-versatile | llama3-70b |
-| llama-3.1-8b-instant | llama3-8b |
-| openai/gpt-oss-20b | gpt-oss-20b |
-| openai/gpt-oss-120b | gpt-oss-120b |
+Model support is provider-agnostic (`eval/providers/`) — subjects and the
+judge are each a `(provider, model_id)` pair (`eval/config.py`), not
+hardcoded to one vendor SDK. Currently supported providers:
+
+| Provider | SDK | Env var(s) |
+|---|---|---|
+| `groq` | `groq` | `GROQ_API_KEY` |
+| `sarvam` | `sarvamai` (official SDK) | `SARVAM_API_KEY` |
+| `openai` | `openai` (works with any OpenAI-compatible endpoint) | `OPENAI_API_KEY`, optional `OPENAI_BASE_URL` |
+
+| Alias | Provider | Model ID |
+|---|---|---|
+| llama3-70b | groq | llama-3.3-70b-versatile |
+| llama3-8b | groq | llama-3.1-8b-instant |
+| gpt-oss-20b | groq | openai/gpt-oss-20b |
+| gpt-oss-120b | groq | openai/gpt-oss-120b |
+| sarvam-105b | sarvam | sarvam-105b |
+| sarvam-30b | sarvam | sarvam-30b |
+| sarvam-m | sarvam | sarvam-m |
+| gpt-4o-mini | openai | gpt-4o-mini |
 
 `gemma2-9b-it` and `mixtral-8x7b-32768` were deprecated by Groq (2025-10-08
 and 2025-03-20 respectively) and are no longer callable; replaced above with
 Groq's current production models as of 2026-07-05. Note also that
 `llama-3.3-70b-versatile` and `llama-3.1-8b-instant` — the latter is also the
-judge model, see limitations — have a deprecation announced for 2026-08-16 on
-free/developer tiers; revisit before then.
+default judge model, see limitations — have a deprecation announced for
+2026-08-16 on free/developer tiers; revisit before then.
+
+You only need API keys for the providers whose models you actually evaluate.
+
+### Configuring the judge independently of subjects
+
+By default the judge is `groq`/`llama-3.1-8b-instant` (unchanged from before
+this refactor, which is also subject alias `llama3-8b` — see
+[Known Limitations](#known-limitations)). To point the judge at a different
+provider/model than anything you're evaluating, set both env vars together:
+
+```bash
+JUDGE_PROVIDER=openai
+JUDGE_MODEL_ID=gpt-4o-mini
+```
+
+If a run's subject list ever matches the configured judge exactly,
+`runner.py` logs a warning at run time rather than staying silent about it.
 
 ## Scoring Dimensions
 
-Each response is scored by `llama-3.1-8b-instant` (LLM-as-judge) on:
+Each response is scored by the configured judge model on:
 
 - **Correctness** — Factual/mathematical accuracy vs reference answer
 - **Completeness** — All parts of the question addressed
@@ -58,7 +89,8 @@ Each response is scored by `llama-3.1-8b-instant` (LLM-as-judge) on:
 ```bash
 pip install -r requirements.txt
 cp .env.example .env
-# Add your GROQ_API_KEY
+# Add API keys for whichever providers you'll use (see table above) --
+# GROQ_API_KEY is required for the default --models/--all set.
 ```
 
 ## Run Evaluation
@@ -69,6 +101,9 @@ python eval/runner.py --quick
 
 # Bengali + Hindi only, 2 models — ~15 min
 python eval/runner.py --models llama3-70b llama3-8b --langs bengali hindi
+
+# Mix providers in one run
+python eval/runner.py --models llama3-70b sarvam-105b gpt-4o-mini --langs bengali
 
 # Full benchmark (all models, all languages) — ~45 min
 python eval/runner.py --all
@@ -109,12 +144,14 @@ bharatbench/
 │   └── english/questions.json    (22 questions)
 ├── eval/
 │   ├── runner.py      # Multi-model evaluation runner
-│   └── analyze.py     # Results analysis + LaTeX + dashboard
+│   ├── analyze.py     # Results analysis + LaTeX + dashboard
+│   ├── config.py      # Model + judge registry (provider, model_id)
+│   └── providers/     # Provider abstraction: groq, sarvam, openai-compatible
 ├── scripts/
 │   ├── validate_dataset.py   # Schema/provenance validation, report-only
 │   ├── decontaminate.py      # n-gram overlap check against a reference corpus
 │   └── package_for_hf.py     # Local HF-datasets packaging (does not upload)
-├── tests/             # Smoke tests, stubbed Groq client, no API key needed
+├── tests/             # Smoke tests, stubbed providers, no API key needed
 └── results/            # JSON output files (gitignored)
 ```
 
@@ -125,12 +162,15 @@ one that was never created.
 
 ## Known Limitations
 
-- **Judge/subject model overlap.** `llama-3.1-8b-instant` is both one of the
-  four models being evaluated and the LLM-as-judge scoring every response,
-  including its own. This is a known source of self-preference bias in
-  LLM-as-judge setups — treat that model's scores with extra skepticism until
-  the judge is decoupled from the model pool (e.g. a fixed, stronger,
-  never-evaluated judge model).
+- **Judge/subject model overlap (default, avoidable via config).**
+  `llama-3.1-8b-instant` is both one of the four default models being
+  evaluated and the default LLM-as-judge, scoring every response including
+  its own — a known source of self-preference bias. This is now avoidable:
+  set `JUDGE_PROVIDER`/`JUDGE_MODEL_ID` to an independent model (see
+  "Configuring the judge independently of subjects" above), and `runner.py`
+  will warn at run time if a run's subjects still overlap the configured
+  judge. The default hasn't been changed, to avoid silently altering scoring
+  behavior/comparability — decoupling it is opt-in.
 - **Non-parallel language question sets.** The Bengali, Hindi, and English
   question sets are not translations of each other — they cover different
   topics (e.g. Bengali asks about Tagore and the Bangladesh Liberation War;
